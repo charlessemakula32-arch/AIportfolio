@@ -1,621 +1,172 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Charlie Web Engineer — Strategic Web Engineering</title>
-
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- AOS for scroll animations -->
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-
-  <style>
-    :root{
-      --neon: #00f2ff;
-      --bg-dark: #05060a;
-      --muted: #98a3b3;
-    }
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: linear-gradient(180deg,#03040a 0%, #070812 100%);
-      color:#e6eef6;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      line-height:1.5;
-      scroll-behavior:smooth;
-    }
-
-    /* Preloader (simple) */
-    #preloader{
-      position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center;
-      background: radial-gradient(circle at 30% 20%, rgba(0,242,255,0.02), transparent), rgba(0,0,0,0.9);
-    }
-    .ring{
-      width:72px;height:72px;border-radius:9999px;border:6px solid var(--neon); border-top-color:transparent; animation:spin 1s linear infinite; box-shadow:0 0 24px rgba(0,242,255,0.12);
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
-
-    /* Header Glass */
-    header{
-      position:fixed; top:0; left:0; right:0; z-index:70;
-      backdrop-filter: blur(12px) saturate(140%);
-      -webkit-backdrop-filter: blur(12px) saturate(140%);
-      background: linear-gradient(180deg, rgba(4,8,12,0.65), rgba(4,8,12,0.30));
-      border-bottom: 1px solid rgba(0,242,255,0.06);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-    }
-    .nav-inner{max-width:1200px;margin:0 auto;padding:0.6rem 1rem;display:flex;align-items:center;justify-content:space-between;}
-    .brand{display:flex;gap:.75rem;align-items:center}
-    .logo{
-      width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-weight:800;
-      background:linear-gradient(135deg,#00f2ff,#5b77ff); color:#04111a; box-shadow: 0 8px 30px rgba(0,242,255,0.06);
-    }
-    .nav-links{display:flex;gap:1.1rem;align-items:center}
-    .nav-links a{color:rgba(230,238,246,0.9);text-decoration:none;padding:.35rem .6rem;border-radius:6px}
-    .nav-links a:hover{background:rgba(255,255,255,0.02); color:var(--neon)}
-
-    /* Hamburger (glass capsule) */
-    .hamburger {
-      display:inline-flex;align-items:center;justify-content:center;padding:.5rem;border-radius:12px;
-      background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); box-shadow:0 6px 20px rgba(0,242,255,0.04);
-    }
-    .hamburger span{display:block;width:22px;height:2px;background:var(--neon);margin:3px 0;border-radius:2px;transition:0.35s}
-
-    /* overlay menu */
-    .overlay{
-      position:fixed; right:0; top:0; width:100%; height:100%; z-index:75; display:none;
-      align-items:center; justify-content:flex-end;
-      background: linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.35));
-      backdrop-filter: blur(8px);
-    }
-    .panel{
-      width:420px; max-width:92vw; height:100%; background:linear-gradient(180deg, rgba(3,7,13,0.96), rgba(6,10,18,0.98));
-      box-shadow:-20px 0 80px rgba(0,0,0,0.6); padding:48px 28px; overflow:auto;
-      border-left:1px solid rgba(255,255,255,0.02);
-    }
-    .panel .close{position:absolute;right:18px;top:18px;font-size:28px;color:var(--neon);background:transparent;border:none}
-    .panel a{display:block;color:var(--neon);font-weight:600;margin:18px 0;text-decoration:none;font-size:1.05rem}
-    .panel p{color:rgba(230,238,246,0.8);line-height:1.6}
-
-    /* page spacing */
-    .container{max-width:1200px;margin:0 auto;padding:clamp(80px,6.5vh,120px) 1.25rem}
-    .hero{display:grid;grid-template-columns:1fr 420px;gap:2.5rem;align-items:center}
-    @media(max-width:880px){ .hero{grid-template-columns:1fr; padding-bottom:2.5rem} .nav-links{display:none} }
-
-    /* hero text */
-    .kicker{display:inline-block;background:rgba(0,242,255,0.06);color:var(--neon);padding:.35rem .6rem;border-radius:999px;font-weight:700}
-    h1{font-size:2.45rem;line-height:1.02;margin-top:.6rem}
-    .lead{color:var(--muted); margin-top:.9rem; max-width:60ch}
-
-    /* hero visual */
-    .hero-card{
-      width:100%; max-width:420px; border-radius:14px; overflow:hidden; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border:1px solid rgba(255,255,255,0.03); padding:0; box-shadow:0 20px 60px rgba(0,0,0,0.6);
-    }
-    .hero-card img{width:100%; height:320px; object-fit:cover}
-
-    .hero-card .meta{padding:18px}
-    .hero-card h3{font-size:1.05rem;margin-bottom:6px}
-    .hero-card p{color:var(--muted);font-size:.95rem}
-
-    /* sections */
-    section.block{padding:48px 0;border-top:1px solid rgba(255,255,255,0.02)}
-    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
-    @media(max-width:900px){ .grid-3{grid-template-columns:1fr} }
-
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.008));
-      border:1px solid rgba(255,255,255,0.03); padding:20px;border-radius:12px;
-      transition:transform .35s, box-shadow .35s;
-    }
-    .card:hover{transform:translateY(-8px);box-shadow:0 18px 50px rgba(0,0,0,0.6);border-color:rgba(0,242,255,0.08)}
-
-    /* tech chips */
-    .chip{display:inline-block;padding:.35rem .6rem;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02);color:var(--neon);font-weight:600;margin:.3rem .35rem 0 0}
-
-    /* projects grid */
-    .projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-    @media(max-width:900px){ .projects-grid{grid-template-columns:1fr} }
-    .project{
-      border-radius:12px; overflow:hidden; background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);
-      border:1px solid rgba(255,255,255,0.03); transition:transform .35s; cursor:pointer;
-    }
-    .project img{width:100%;height:180px;object-fit:cover}
-    .project .inner{padding:16px}
-
-    /* CTA row */
-    .cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
-    .btn{padding:.7rem 1.05rem;border-radius:9px;font-weight:700;display:inline-flex;gap:.6rem;align-items:center}
-    .btn-primary{background:var(--neon);color:#03151a}
-    .btn-ghost{border:1px solid rgba(255,255,255,0.06); color:var(--neon) }
-
-    /* FAQ */
-    .faq-item{border-radius:10px;padding:14px;background:rgba(255,255,255,0.012);border:1px solid rgba(255,255,255,0.02);margin:10px 0}
-    .faq-q{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
-    .faq-a{margin-top:10px;color:var(--muted);display:none}
-
-    /* contact form */
-    .form {max-width:720px;margin:0 auto;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-    .form label{font-size:.9rem;color:var(--muted);display:block;margin-bottom:6px}
-    .form input,.form textarea{
-      width:100%;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:rgba(0,0,0,0.3);color:#e6eef6;margin-bottom:12px
-    }
-    .form .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    @media(max-width:640px){ .form .row{grid-template-columns:1fr} }
-
-    /* social icons */
-    .socials{display:flex;gap:10px;align-items:center}
-    .socials a{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02); color:var(--neon)}
-
-    /* footer */
-    footer{padding:36px 0;text-align:center;color:var(--muted);border-top:1px solid rgba(255,255,255,0.02);margin-top:48px}
-
-    /* little helpers */
-    .muted{color:var(--muted)}
-    .uppercase{letter-spacing:.12em;font-weight:700;color:rgba(255,255,255,0.08);font-size:.72rem}
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Charlie Web Engineer — Futuristic Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
 </head>
+
 <body>
 
-  <!-- Preloader -->
-  <div id="preloader"><div class="ring" aria-hidden="true"></div></div>
+  <!-- ======= HEADER ======= -->
+  <header class="header">
+    <div class="logo">Charlie<span>Web</span></div>
 
-  <!-- Header -->
-  <header>
-    <div class="nav-inner">
-      <div class="brand">
-        <div class="logo">CW</div>
-        <div>
-          <div style="font-weight:700">Charlie Web Engineer</div>
-          <div class="muted" style="font-size:.85rem">Senior Web Engineering · Strategy & Product</div>
-        </div>
-      </div>
-
-      <nav class="nav-links">
-        <a href="#about">About</a>
-        <a href="#services">Services</a>
-        <a href="#process">Process</a>
-        <a href="#projects">Projects</a>
-        <a href="#faq">FAQ</a>
-        <a href="#contact">Contact</a>
-      </nav>
-
-      <!-- hamburger -->
-      <button id="hambtn" class="hamburger" aria-label="Open menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
+    <button id="menu-btn" class="hamburger">
+      <span></span><span></span><span></span>
+    </button>
   </header>
 
-  <!-- overlay panel -->
-  <div id="overlay" class="overlay" aria-hidden="true">
-    <div class="panel" role="dialog" aria-modal="true">
-      <button id="closeOverlay" class="close" aria-label="Close menu">×</button>
-      <div style="margin-top:24px">
-        <a href="#top">Home</a>
-        <a href="#about">About</a>
-        <a href="#services">Services</a>
-        <a href="#process">Process</a>
-        <a href="#projects">Projects</a>
-        <a href="#faq">FAQ</a>
-        <a href="#contact">Contact</a>
-      </div>
+  <!-- ======= MOBILE MENU ======= -->
+  <nav id="mobile-menu">
+    <a href="#home">Home</a>
+    <a href="#about">About Me</a>
+    <a href="#services">Web Dev Info</a>
+    <a href="#projects">Projects</a>
+    <a href="#faq">Q&A</a>
+    <a href="#contact">Contact</a>
+  </nav>
 
-      <div style="margin-top:28px">
-        <p class="muted">Prefer direct contact?</p>
-        <p style="margin-top:10px"><a class="btn btn-primary" href="tel:+256700295552">📞 Call 0700295552</a></p>
-        <p style="margin-top:10px"><a class="btn btn-ghost" href="mailto:semakulacharles16@gmail.com">✉ Email</a></p>
-      </div>
+  <!-- ======= HERO SECTION ======= -->
+  <section id="home" class="hero">
+    <div class="hero-text">
+      <h1 class="intro">Building Tomorrow’s Web Today.</h1>
+      <p class="sub">Fast. Modern. Intelligent. Designed for Growth.</p>
 
-      <div style="margin-top:28px">
-        <p class="muted uppercase">Follow</p>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <a href="#" title="GitHub" aria-label="GitHub" class="socials"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="1.6" d="M12 .5C5.73.5.75 5.48.75 11.75c0 4.86 3.14 8.98 7.5 10.43.55.1.75-.24.75-.52 0-.26-.01-1-.02-1.96-3.05.66-3.69-1.47-3.69-1.47-.5-1.26-1.22-1.6-1.22-1.6-.99-.68.08-.67.08-.67 1.1.08 1.67 1.14 1.67 1.14.97 1.67 2.54 1.19 3.16.91.1-.71.38-1.19.69-1.46-2.44-.28-5-1.22-5-5.44 0-1.2.43-2.18 1.14-2.95-.12-.28-.5-1.4.11-2.92 0 0 .93-.3 3.05 1.13a10.62 10.62 0 0 1 5.55 0c2.12-1.43 3.05-1.13 3.05-1.13.61 1.52.23 2.64.11 2.92.71.77 1.14 1.76 1.14 2.95 0 4.23-2.57 5.16-5.01 5.43.39.34.73 1.02.73 2.06 0 1.49-.01 2.69-.01 3.06 0 .28.2.62.76.52 4.36-1.45 7.5-5.57 7.5-10.43C23.25 5.48 18.27.5 12 .5z"/></svg></a>
-          <a href="#" title="LinkedIn" aria-label="LinkedIn" class="socials"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="1.6" d="M16 8a6 6 0 0 1 6 6v6h-4v-6a2 2 0 0 0-2-2h-1v8h-4V8h4v1c.8-1.4 3-2 4-2zM2 9h4v12H2zM4 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg></a>
-          <a href="#" title="Twitter" aria-label="Twitter" class="socials"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="1.6" d="M23 3s-1 3-3 4c0 0-2-1-3 0 0 0-.5 4 4 6-1 1-4 2-6 2-6 0-11-5-11-11 0-.2 0-.4.02-.6C4 8 2 6 2 6s2 7 11 9c0 0 4 .5 6-2 0 0 3-1 3-6 0 0-1 1-2 1z"/></svg></a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Page content -->
-  <main id="top">
-
-    <!-- Hero -->
-    <div class="container">
-      <div class="hero" data-aos="fade-up">
-        <div>
-          <div class="kicker">STRATEGIC WEB ENGINEERING</div>
-          <h1>Design, Build & Scale web products that convert — <span style="color:var(--neon)">fast</span></h1>
-          <p class="lead muted">Hi — I'm Charlie. With 15 years experience building web products for startups and scale-ups, I bring strategy, performance engineering and polished UI to every project. I focus on converting visitors into users and customers.</p>
-
-          <div class="cta-row" style="margin-top:18px">
-            <a class="btn btn-primary" href="#contact">Start a Project</a>
-            <a class="btn btn-ghost" href="#projects">View Projects</a>
-            <a class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--neon)" href="#faq">FAQ</a>
-          </div>
-
-          <div style="margin-top:18px" class="muted">I specialize in product websites, brand-presence sites, and marketing funnels optimized for speed and conversions.</div>
-
-          <div style="margin-top:18px" class="muted">Call: <a href="tel:+256700295552" style="color:var(--neon);text-decoration:none">0700295552</a> • Email: <a href="mailto:semakulacharles16@gmail.com" style="color:var(--neon)">semakulacharles16@gmail.com</a></div>
-
-        </div>
-
-        <aside class="hero-card" aria-hidden="true" data-aos="fade-left">
-          <img src="IMG_20251114_192809_223.webp" alt="Charlie — profile" />
-          <div class="meta">
-            <h3>Charlie Web Engineer</h3>
-            <p class="muted">15 years building production websites • Frontend & UX specialist</p>
-            <div style="margin-top:12px">
-              <span class="chip">React</span>
-              <span class="chip">Next.js</span>
-              <span class="chip">Tailwind</span>
-              <span class="chip">Node</span>
-            </div>
-          </div>
-        </aside>
+      <div class="hero-buttons">
+        <a href="#projects" class="btn">See My Work</a>
+        <a href="#contact" class="btn-outline">Hire Me</a>
       </div>
     </div>
 
-    <!-- Services -->
-    <section id="services" class="block" data-aos="fade-up">
-      <div class="container">
-        <div class="uppercase">Services</div>
-        <h2 style="margin-top:8px">What I deliver</h2>
+    <div class="profile-card">
+      <img src="IMG_20251114_192809_223.webp" class="profile-img" />
+      <div class="glow"></div>
+    </div>
+  </section>
 
-        <div class="grid-3" style="margin-top:18px">
-          <div class="card">
-            <h3>Landing Pages & Funnels</h3>
-            <p class="muted" style="margin-top:8px">High-converting landing pages with A/B friendly structure, analytics, and tracking. Optimized for speed and SEO.</p>
-            <ul style="margin-top:12px" class="muted">
-              <li>Fast LCP / Core Web Vitals</li>
-              <li>Semantic SEO & schema</li>
-              <li>Analytics & event tracking</li>
-            </ul>
-          </div>
+  <!-- ======= ABOUT SECTION ======= -->
+  <section id="about" class="section">
+    <h2>Who is Charlie?</h2>
+    <p>
+      I’m a professional, fast-learning Web Engineer who builds beautiful,
+      responsive, modern websites designed to help businesses grow.  
+      My work focuses on performance, UI/UX, animations, strategy and long-term value.
+    </p>
+  </section>
 
-          <div class="card">
-            <h3>Product UI & Frontend Engineering</h3>
-            <p class="muted" style="margin-top:8px">React/Next.js frontends, component systems, accessibility, and performance tuning.</p>
-            <ul style="margin-top:12px" class="muted">
-              <li>Reusable component libs</li>
-              <li>SSR/SSG apps</li>
-              <li>Testing & CI</li>
-            </ul>
-          </div>
+  <!-- ======= WEB DEV INFO SECTION ======= -->
+  <section id="services" class="section">
+    <h2>Modern Web Development Explained</h2>
 
-          <div class="card">
-            <h3>Brand Websites & Re-design</h3>
-            <p class="muted" style="margin-top:8px">Polished brand sites that communicate trust — ideal for agencies and founders.</p>
-            <ul style="margin-top:12px" class="muted">
-              <li>Design-to-code</li>
-              <li>CMS integration</li>
-              <li>Localization support</li>
-            </ul>
-          </div>
-        </div>
+    <div class="info-grid">
+
+      <div class="info-card">
+        <h3>⚡ Performance</h3>
+        <p>Fast-loading sites increase conversions, customer trust, and ranking.</p>
       </div>
-    </section>
 
-    <!-- Process -->
-    <section id="process" class="block" data-aos="fade-up">
-      <div class="container">
-        <div class="uppercase">Process</div>
-        <h2 style="margin-top:8px">How I work — transparent & predictable</h2>
-
-        <div style="margin-top:18px" class="grid-3">
-          <div class="card">
-            <strong>Discovery & Strategy</strong>
-            <p class="muted" style="margin-top:6px">We map goals, users and conversion metrics. No technical assumptions — we measure then decide.</p>
-          </div>
-          <div class="card">
-            <strong>Design & Prototype</strong>
-            <p class="muted" style="margin-top:6px">Fast prototypes, interaction specs, hand-off-ready designs and microcopy that speaks to users.</p>
-          </div>
-          <div class="card">
-            <strong>Build & Measure</strong>
-            <p class="muted" style="margin-top:6px">Production-grade code, performance optimizations, analytics, and a rollout plan.</p>
-          </div>
-        </div>
+      <div class="info-card">
+        <h3>🎨 UI / UX Design</h3>
+        <p>Beautiful interfaces make users stay longer and take action.</p>
       </div>
-    </section>
 
-    <!-- Projects -->
-    <section id="projects" class="block" data-aos="fade-up">
-      <div class="container">
-        <div class="uppercase">Work</div>
-        <h2 style="margin-top:8px">Selected Case Studies</h2>
-
-        <div style="margin-top:18px" class="projects-grid">
-          <article class="project" data-aos="zoom-in">
-            <img src="IMG_20251114_192809_223.webp" alt="Case Study 1" />
-            <div class="inner">
-              <h4 style="font-weight:700">Balloon Safari — Booking Funnel</h4>
-              <p class="muted" style="margin-top:8px">Redesigned funnel leading to 36% increase in bookings. Key work: speed, trust signals, clear CTAs.</p>
-            </div>
-          </article>
-
-          <article class="project" data-aos="zoom-in" data-aos-delay="80">
-            <img src="IMG_20251114_192809_223.webp" alt="Case Study 2" />
-            <div class="inner">
-              <h4 style="font-weight:700">Tourism Portal — Multi-region</h4>
-              <p class="muted" style="margin-top:8px">Multi-language site with fast international CDN, SEO structure, and localized content strategy.</p>
-            </div>
-          </article>
-
-          <article class="project" data-aos="zoom-in" data-aos-delay="160">
-            <img src="IMG_20251114_192809_223.webp" alt="Case Study 3" />
-            <div class="inner">
-              <h4 style="font-weight:700">Startup Landing — Seed to Series A</h4>
-              <p class="muted" style="margin-top:8px">Brand refresh and landing page optimizing for investor and user conversion.</p>
-            </div>
-          </article>
-        </div>
-
-        <!-- More Projects expandable -->
-        <div style="text-align:center;margin-top:20px">
-          <button id="moreBtn" class="btn btn-primary">Show more projects</button>
-        </div>
-
-        <div id="extraProjects" style="margin-top:20px;display:none">
-          <div class="projects-grid">
-            <article class="project" data-aos="fade-up"><img src="IMG_20251114_192809_223.webp" alt=""><div class="inner"><h4>Hotel Booking Flow</h4><p class="muted">Complete checkout redesign.</p></div></article>
-            <article class="project" data-aos="fade-up" data-aos-delay="60"><img src="IMG_20251114_192809_223.webp" alt=""><div class="inner"><h4>E-commerce UI Kit</h4><p class="muted">Component library for fast launches.</p></div></article>
-            <article class="project" data-aos="fade-up" data-aos-delay="120"><img src="IMG_20251114_192809_223.webp" alt=""><div class="inner"><h4>Event Booking Platform</h4><p class="muted">Scalable booking and payments.</p></div></article>
-          </div>
-        </div>
+      <div class="info-card">
+        <h3>📱 Responsive Design</h3>
+        <p>Your website must look perfect on all phones, tablets, and desktops.</p>
       </div>
-    </section>
 
-    <!-- Testimonials -->
-    <section class="block" data-aos="fade-up">
-      <div class="container">
-        <div class="uppercase">Social Proof</div>
-        <h2 style="margin-top:8px">What clients say</h2>
-
-        <div class="grid-3" style="margin-top:18px">
-          <div class="card">
-            <p style="font-style:italic">"Charlie turned our concept into a product in weeks. The speed and clarity are excellent."</p>
-            <p class="muted" style="margin-top:10px">— Product Lead, Murchison Tours</p>
-          </div>
-
-          <div class="card">
-            <p style="font-style:italic">"The design and code were exceptionally clean — deployment was painless."</p>
-            <p class="muted" style="margin-top:10px">— Founder, TravelTech</p>
-          </div>
-
-          <div class="card">
-            <p style="font-style:italic">"We saw measurable improvements in conversion and site speed."</p>
-            <p class="muted" style="margin-top:10px">— Marketing Head, Safari Co.</p>
-          </div>
-        </div>
+      <div class="info-card">
+        <h3>🔒 Security</h3>
+        <p>Secure websites protect your brand and customer data.</p>
       </div>
-    </section>
 
-    <!-- FAQ / Q&A -->
-    <section id="faq" class="block" data-aos="fade-up">
-      <div class="container">
-        <div class="uppercase">FAQ</div>
-        <h2 style="margin-top:8px">Questions I get asked most</h2>
-
-        <div style="margin-top:16px">
-          <div class="faq-item">
-            <div class="faq-q" onclick="toggleFaq(this)"><strong>How long does a typical website take?</strong><span class="muted">+</span></div>
-            <div class="faq-a">A typical marketing site (5–8 pages) takes 3–6 weeks from discovery to launch depending on scope. Larger apps take longer and include sprints.</div>
-          </div>
-
-          <div class="faq-item">
-            <div class="faq-q" onclick="toggleFaq(this)"><strong>Do you provide post-launch support?</strong><span class="muted">+</span></div>
-            <div class="faq-a">Yes — I offer maintenance plans, performance monitoring and scheduled updates.</div>
-          </div>
-
-          <div class="faq-item">
-            <div class="faq-q" onclick="toggleFaq(this)"><strong>What technologies do you use?</strong><span class="muted">+</span></div>
-            <div class="faq-a">React, Next.js, Tailwind, Node, Vercel/Netlify, and standard backend stacks. I choose tools that match the business need.</div>
-          </div>
-
-          <div class="faq-item">
-            <div class="faq-q" onclick="toggleFaq(this)"><strong>How do you price projects?</strong><span class="muted">+</span></div>
-            <div class="faq-a">I price based on scope and outcomes — provide your brief and I’ll return a fixed proposal and timelines. I also offer phases and retainers.</div>
-          </div>
-        </div>
+      <div class="info-card">
+        <h3>🚀 SEO Optimization</h3>
+        <p>Better SEO = more visibility = more clients = more revenue.</p>
       </div>
-    </section>
 
-    <!-- Contact (professional form) -->
-    <section id="contact" class="block" data-aos="fade-up">
-      <div class="container">
-        <div class="uppercase">Contact</div>
-        <h2 style="margin-top:8px">Ready to start? Let’s talk</h2>
-
-        <div style="margin-top:18px" class="grid" >
-          <div style="max-width:720px;margin:0 auto" >
-            <form id="contactForm" class="form" novalidate>
-              <label for="name">Full name</label>
-              <input id="name" name="name" required placeholder="Your full name" />
-
-              <label for="email">Email</label>
-              <input id="email" type="email" name="email" required placeholder="you@company.com" />
-
-              <label for="phone">Phone (optional)</label>
-              <input id="phone" name="phone" placeholder="+256700295552" />
-
-              <label for="service">Service interested in</label>
-              <select id="service" name="service" style="width:100%;padding:12px;border-radius:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.03);color:#e6eef6;margin-bottom:12px">
-                <option>Landing Page / Funnel</option>
-                <option>Product Frontend</option>
-                <option>Brand Website</option>
-                <option>Maintenance & Support</option>
-                <option>Other</option>
-              </select>
-
-              <label for="message">Project brief / message</label>
-              <textarea id="message" name="message" rows="6" placeholder="A short description of your project, goals and timeline..." required></textarea>
-
-              <div style="display:flex;gap:12px;align-items:center">
-                <button type="submit" class="btn btn-primary">Send message</button>
-                <button type="button" id="callBtn" class="btn btn-ghost" onclick="location.href='tel:+256700295552'">Call: 0700295552</button>
-              </div>
-
-              <div id="formFeedback" style="margin-top:12px;color:var(--neon);display:none"></div>
-            </form>
-          </div>
-        </div>
-
+      <div class="info-card">
+        <h3>🤖 Smart Automation</h3>
+        <p>Forms, emails, tracking, analytics — handled intelligently.</p>
       </div>
-    </section>
 
-    <!-- Bottom CTA -->
-    <section class="block" data-aos="fade-up">
-      <div class="container" style="text-align:center">
-        <h3 style="margin-bottom:8px">Need a fast audit?</h3>
-        <p class="muted">I provide short technical audits to identify low-effort, high-impact wins. Reply with your URL.</p>
-        <div style="margin-top:12px"><a class="btn btn-ghost" href="mailto:semakulacharles16@gmail.com">Request audit — Email me</a></div>
+    </div>
+  </section>
+
+  <!-- ======= PROJECTS SECTION ======= -->
+  <section id="projects" class="section">
+    <h2>Recent Projects</h2>
+
+    <div class="projects-grid">
+
+      <div class="project-card">
+        <h3>Portfolio Website</h3>
+        <p>High-speed responsive portfolio with animations.</p>
       </div>
-    </section>
 
-    <footer>
-      <div style="max-width:1200px;margin:0 auto;padding:18px 1rem">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-          <div style="display:flex;gap:12px;align-items:center">
-            <div style="width:40px;height:40px;background:linear-gradient(135deg,#00f2ff,#5b77ff);display:grid;place-items:center;border-radius:8px;color:#04111a;font-weight:800">CW</div>
-            <div>
-              <div style="font-weight:700">Charlie Web Engineer</div>
-              <div class="muted" style="font-size:.9rem">Strategy • Design • Frontend</div>
-            </div>
-          </div>
-
-          <div class="muted">© 2025 Charlie Web Engineer — All rights reserved</div>
-        </div>
+      <div class="project-card">
+        <h3>Business Landing Page</h3>
+        <p>Conversion-focused design with strong branding.</p>
       </div>
-    </footer>
 
-  </main>
+      <div class="project-card">
+        <h3>E-Commerce Prototype</h3>
+        <p>Modern product grid + checkout simulation.</p>
+      </div>
 
-  <!-- JS: interactions, form validation, AOS init -->
-  <script>
-    // Preloader
-    window.addEventListener('load', () => {
-      const p = document.getElementById('preloader');
-      if (p) p.style.display = 'none';
-      if (window.AOS) AOS.init({duration:900, once:true, easing:'ease-in-out'});
-    });
+    </div>
 
-    // Overlay menu toggles
-    const hambtn = document.getElementById('hambtn');
-    const overlay = document.getElementById('overlay');
-    const closeOverlay = document.getElementById('closeOverlay');
+    <button class="btn load-more" id="loadMore">Load More Projects</button>
 
-    function openOverlay(){
-      overlay.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
-    function closeOverlayFn(){
-      overlay.style.display = 'none';
-      document.body.style.overflow = '';
-    }
-    hambtn && hambtn.addEventListener('click', openOverlay);
-    closeOverlay && closeOverlay.addEventListener('click', closeOverlayFn);
-    overlay && overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeOverlayFn() });
+    <div id="more-projects" class="more-projects"></div>
+  </section>
 
-    // Projects "Show more" button
-    const moreBtn = document.getElementById('moreBtn');
-    const extra = document.getElementById('extraProjects');
-    moreBtn && moreBtn.addEventListener('click', () => {
-      if(extra.style.display === 'none' || extra.style.display === ''){
-        extra.style.display = 'block';
-        moreBtn.textContent = 'Show less';
-      } else {
-        extra.style.display = 'none';
-        moreBtn.textContent = 'Show more projects';
-        window.scrollTo({top:document.getElementById('projects').offsetTop, behavior:'smooth'});
-      }
-      AOS.refresh();
-    });
+  <!-- ======= FAQ SECTION ======= -->
+  <section id="faq" class="section">
+    <h2>Q & A</h2>
 
-    // FAQ accordion
-    function toggleFaq(el){
-      const a = el.querySelector('.faq-a');
-      if(!a) {
-        // find next element
-        const parent = el.parentElement;
-        const ans = parent.querySelector('.faq-a');
-        if(ans) ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
-        return;
-      }
-      a.style.display = (a.style.display === 'block') ? 'none' : 'block';
-    }
-    window.toggleFaq = toggleFaq;
+    <div class="faq-item">
+      <h3>Why should I hire you?</h3>
+      <p>Because I deliver fast, modern, reliable websites tailored for your growth.</p>
+    </div>
 
-    // Contact form (front-end validation + fake submit)
-    const form = document.getElementById('contactForm');
-    const feedback = document.getElementById('formFeedback');
+    <div class="faq-item">
+      <h3>How long does a website take?</h3>
+      <p>Most projects take 3–7 days depending on complexity.</p>
+    </div>
 
-    if(form) {
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    <div class="faq-item">
+      <h3>Do you offer long-term support?</h3>
+      <p>Yes. Maintenance, updates, redesigns, and SEO improvements.</p>
+    </div>
+  </section>
 
-        // simple validation
-        const name = document.getElementById('name').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const message = document.getElementById('message').value.trim();
+  <!-- ======= CONTACT SECTION ======= -->
+  <section id="contact" class="section">
+    <h2>Get In Touch</h2>
 
-        if(!name || !email || !message){
-          feedback.style.display = 'block';
-          feedback.style.color = '#ff8c6a';
-          feedback.textContent = 'Please fill name, email and project brief.';
-          return;
-        }
-        // basic email pattern
-        const emailPattern = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
-        if(!emailPattern.test(email)){
-          feedback.style.display = 'block';
-          feedback.style.color = '#ff8c6a';
-          feedback.textContent = 'Please provide a valid email address.';
-          return;
-        }
+    <form class="contact-form">
+      <input type="text" placeholder="Your Name" required />
+      <input type="email" placeholder="Your Email" required />
+      <textarea placeholder="Message" required></textarea>
+      <button type="submit" class="btn">Send Message</button>
+    </form>
 
-        // simulate sending
-        feedback.style.display = 'block';
-        feedback.style.color = 'var(--neon)';
-        feedback.textContent = 'Sending…';
+    <div class="contact-info">
+      <p>📞 Call: <a href="tel:0700295552">0700295552</a></p>
+      <p>📧 Email: charlieweb.engineer@gmail.com</p>
+    </div>
 
-        // fake delay to simulate network
-        await new Promise(r => setTimeout(r, 1000));
+    <div class="socials">
+      <a href="#"><img src="icons/facebook.svg" /></a>
+      <a href="#"><img src="icons/twitter.svg" /></a>
+      <a href="#"><img src="icons/instagram.svg" /></a>
+      <a href="#"><img src="icons/github.svg" /></a>
+    </div>
+  </section>
 
-        // show success
-        feedback.style.color = '#8affdf';
-        feedback.textContent = 'Thanks — message received. I will reply within one business day.';
-
-        // reset form lightly
-        form.reset();
-      });
-    }
-
-    // Accessibility: allow Esc to close overlay
-    document.addEventListener('keydown', (e) => {
-      if(e.key === 'Escape') {
-        if(overlay.style.display === 'flex') closeOverlayFn();
-      }
-    });
-
-    // small scroll reveal for projects not using AOS for immediate entry
-    function revealOnScroll(){
-      document.querySelectorAll('.project').forEach((el, idx) => {
-        const rect = el.getBoundingClientRect();
-        if(rect.top < window.innerHeight - 60){
-          el.style.transform = 'translateY(0)';
-          el.style.opacity = 1;
-        }
-      });
-    }
-    window.addEventListener('scroll', revealOnScroll);
-    revealOnScroll();
-  </script>
 </body>
 </html>
