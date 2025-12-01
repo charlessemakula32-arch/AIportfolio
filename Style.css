@@ -41,6 +41,18 @@ body {
   transform: scale(1.1);
   filter: drop-shadow(0 0 12px #49a8ff);
 }
+.info-icon {
+  font-size: 2rem;
+  color: #49a8ff;
+  margin-bottom: 10px;
+  display: inline-block;
+  transition: 0.3s ease;
+}
+
+.info-icon:hover {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 12px #49a8ff);
+}
 
 
 #loader .spinner {
