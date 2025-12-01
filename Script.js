@@ -1,4 +1,11 @@
-// Mobile menu
+// ------------------- LOADING SCREEN -------------------
+window.addEventListener("load", () => {
+  const loader = document.getElementById("loader");
+  loader.style.opacity = 0;
+  setTimeout(() => loader.style.display = "none", 600);
+});
+
+// ------------------- MOBILE MENU -------------------
 const menuBtn = document.getElementById("menu-btn");
 const mobileMenu = document.getElementById("mobile-menu");
 
@@ -6,7 +13,7 @@ menuBtn.addEventListener("click", () => {
   mobileMenu.classList.toggle("active");
 });
 
-// Load More Projects
+// ------------------- LOAD MORE PROJECTS -------------------
 const moreProjects = document.getElementById("more-projects");
 const loadMoreBtn = document.getElementById("loadMore");
 
@@ -27,3 +34,24 @@ loadMoreBtn.addEventListener("click", () => {
   `;
   loadMoreBtn.style.display = "none";
 });
+
+// ------------------- SCROLL REVEAL -------------------
+const sections = document.querySelectorAll(".section, .hero-text");
+const observer = new IntersectionObserver(
+  entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add("visible");
+      }
+    });
+  }, { threshold: 0.2 }
+);
+sections.forEach(sec => observer.observe(sec));
+
+// ------------------- BACK TO TOP BUTTON -------------------
+const backToTop = document.getElementById("backToTop");
+window.addEventListener("scroll", () => {
+  if(window.scrollY > 300) backToTop.style.display = "flex";
+  else backToTop.style.display = "none";
+});
+backToTop.addEventListener("click", () => window.scrollTo({top:0, behavior:"smooth"}));
