@@ -1,1 +1,59 @@
+/* Custom styles for Project 2 (keeps small and focused) */
+
+/* theme */
+:root {
+  --neon: #00f2ff;
+  --glass: rgba(255,255,255,0.03);
+}
+
+/* glass helper */
+.glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.03);
+  backdrop-filter: blur(8px);
+}
+
+/* neon glow utility */
+.glow { text-shadow: 0 0 8px var(--neon), 0 0 18px var(--neon); }
+
+/* tilt card specifics */
+.tilt-card {
+  perspective: 1200px;
+}
+.tilt-card > .glass {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: box-shadow .35s ease;
+}
+
+/* small neon accent circle (used inside card) */
+.tilt-accent {
+  position: absolute;
+  right: -48px;
+  top: -48px;
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, rgba(0,242,255,0.12), rgba(0,0,0,0));
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+/* card image style */
+.tilt-card img { display:block; }
+
+/* clickable buttons */
+a.button {
+  display:inline-flex; align-items:center; gap:.6rem;
+  padding:.6rem 1rem; border-radius:.5rem; font-weight:600;
+}
+
+/* responsive tweaks */
+@media (max-width:640px) {
+  .tilt-card { margin: 0 auto; }
+}
+
+/* AOS tweaks: slightly delayed ease */
+[data-aos] { opacity: 0; transform: translateY(8px); transition-property: opacity, transform; transition-timing-function: cubic-bezier(.2,.9,.2,1); }
+[data-aos].aos-animate { opacity: 1; transform: translateY(0); }
 
