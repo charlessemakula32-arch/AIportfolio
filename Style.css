@@ -474,6 +474,40 @@ h2 {
   z-index: 999;
   animation: slideUp 1s ease forwards;
 }
+.footer {
+  background: #0b3d91;
+  color: #fff;
+  padding: 25px 8%;
+  text-align: center;
+  font-size: 0.95rem;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+}
+
+.footer a {
+  color: #fff;
+  margin: 0 10px;
+  font-size: 1.2rem;
+  transition: 0.3s ease;
+}
+
+.footer a:hover {
+  color: #49a8ff;
+  transform: translateY(-2px) scale(1.1);
+}
+
+.footer-socials {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.footer-content p {
+  margin-bottom: 8px;
+}
 
 @keyframes slideUp {
   0% { transform: translateY(100%); }
